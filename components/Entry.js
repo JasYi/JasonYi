@@ -11,18 +11,20 @@ export default function entry({ rest, toggleVisited, delItem }) {
 
   return (
     <>
-      <div>
+      <div className=" border-y-2 border-black py-2">
         <h3>{rest.name}</h3>
         <h2>{rest.address}</h2>
-        <h2>{rest.cuisine}</h2>
-        <h2>{rest.price}</h2>
-        <label>Visited: </label>
-        <input
-          type="checkbox"
-          checked={rest.visited}
-          onChange={handleToggleClick}
-        ></input>
-        <button onClick={handleDelClick}>Delete</button>
+        <h2>Cuisine: {rest.cuisine}</h2>
+        <h2>Price: {rest.price}</h2>
+        <div>
+          <label>Visited: </label>
+          <input
+            type="checkbox"
+            checked={rest.visited}
+            onChange={handleToggleClick}
+          ></input>
+        </div>
+        <button onClick={handleDelClick} className='border-2 border-black rounded-full p-1'>Delete</button>
       </div>
     </>
   );

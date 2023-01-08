@@ -66,30 +66,45 @@ export default function Home() {
 
   return (
     <>
-      <EntryList
-        rests={rests}
-        toggleVisited={toggleVisited}
-        delItem={delItem}
-      />{" "}
-      {/*where all of the restaurants are displayed*/}
-      <div>
-        <label>Name</label>
-        <input type="text" name="name" ref={nameref}></input>
+      <div className="">
+        <div className="mx-auto fixed inset-x-0 top-0 text-center bg-stone-200 py-5">
+          <div className='inline-block mx-3'>
+            <label>Name</label>
+            <input type="text" name="name" ref={nameref} className='border-2 border-black rounded ml-1'></input>
+          </div>
+          <div className='inline-block mx-3'>
+            <label>Address</label>
+            <input type="text" name="address" ref={addressref} className='border-2 border-black rounded ml-1'></input>
+          </div>
+          <div className='inline-block mx-3'>
+            <label>Cuisine</label>
+            <input type="text" name="cuisine" ref={cuisineref} className='border-2 border-black rounded ml-1'></input>
+          </div>
+          <div className='inline-block mx-3'>
+            <label>Price </label>
+            <label> $</label>
+            <input type="radio" name="price" value="$" ref={radioref}></input>
+            <label> $$</label>
+            <input type="radio" name="price" value="$$" ref={radioref}></input>
+            <label> $$$</label>
+            <input type="radio" name="price" value="$$$" ref={radioref}></input>
+            <label> ???</label>
+            <input type="radio" name="price" value="???" ref={radioref}></input>
+          </div>
+          <div className='inline-block mx-3'>
+            <button onClick={handleAddRestaurant} className=" p-1 border-2 border-black rounded-full">Add Restaurant</button>
+          </div>
+        </div>
 
-        <label>Address</label>
-        <input type="text" name="address" ref={addressref}></input>
-
-        <label>Cuisine</label>
-        <input type="text" name="cuisine" ref={cuisineref}></input>
-
-        <label>Price</label>
-        <label>$</label>
-        <input type="radio" name="price" value="$" ref={radioref}></input>
-        <label>$$</label>
-        <input type="radio" name="price" value="$$" ref={radioref}></input>
-        <label>$$$</label>
-        <input type="radio" name="price" value="$$$" ref={radioref}></input>
-        <button onClick={handleAddRestaurant}>Add Restaurant</button>
+        {/*where all of the restaurants are displayed*/}
+        <div className='mt-[4.5rem] mx-7'>
+          <EntryList
+            rests={rests}
+            toggleVisited={toggleVisited}
+            delItem={delItem}
+            className="float-left inline-block w-1/2"
+          />
+        </div>
       </div>
     </>
   );

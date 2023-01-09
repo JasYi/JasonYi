@@ -1,15 +1,24 @@
+import { loadGetInitialProps } from "next/dist/shared/lib/utils";
 import Image from "next/image";
 import React, { useState, useRef, useEffect } from "react";
 import uniqid from "uniqid";
 import EntryList from "../components/EntryList";
+import Papa from "papaparse";
+import { restaurantData } from "../data";
 const LOCAL_STORAGE_KEY = "GETLIST";
 
-export default function Home() {
+/*const fs = require("fs");
+const { parse } = require("csv-parse");*/
+
+export default function Home({ restaurantList }) {
   const [rests, setRests] = useState([]);
   const nameref = useRef();
   const addressref = useRef();
   const cuisineref = useRef();
   const radioref = useRef();
+  const nameAddressRef = useRef();
+
+  const restList = restaurantList;
 
   //gets information from local storage on start of app
   useEffect(() => {
@@ -24,14 +33,38 @@ export default function Home() {
 
   //adds resturaunt
   function handleAddRestaurant(e) {
-    const name = nameref.current.value;
-    const address = addressref.current.value;
-    const cuisine = cuisineref.current.value;
-    var price = document.querySelector('input[name="price"]:checked').value;
+    //using the dropdown menu
+    var name = "";
+    var address = "";
+    var restID;
+    if (nameAddressRef.current.value != null)
+      restID = nameAddressRef.current.value;
+    console.log(restID.toString());
+    restList.forEach((entry) => {
+      if (entry.PermitID.toString() === restID.toString()) {
+        name = entry.Name;
+        address = entry.Address;
+      }
+    });
+    console.log(name + " " + address);
 
-    console.log(price);
+    //checking the form
+    if (nameref.current.value != null) name = nameref.current.value;
+    if (addressref.current.value != null) address = addressref.current.value;
 
-    if (name === "" || cuisine === "" || price === null) return;
+    //checking cuisine and price
+    var cuisine;
+    if (cuisineref.current.value != "") cuisine = cuisineref.current.value;
+    else cuisine = "???";
+    console.log(cuisine);
+    var price;
+    if (document.querySelector('input[name="price"]:checked') != null) {
+      price = document.querySelector('input[name="price"]:checked').value;
+      console.log(price);
+    } else price = "???";
+    console.log(price + " price");
+
+    //if (name === "" || cuisine === "" || price === null) return;
     setRests((prevRests) => {
       return [
         ...prevRests,
@@ -49,7 +82,9 @@ export default function Home() {
     nameref.current.value = null;
     addressref.current.value = null;
     cuisineref.current.value = null;
-    document.querySelector('input[name="price"]:checked').checked = false;
+    if (document.querySelector('input[name="price"]:checked') != null)
+      document.querySelector('input[name="price"]:checked').checked = false;
+    nameAddressRef.current.value = "";
   }
 
   //changes rest value when visited is checked
@@ -70,11 +105,6 @@ export default function Home() {
     console.log(rests);
   }
 
-  /*function delReview(id) {
-    const newRests = rests.filter((rest) => id === rest.id);
-    setRests(newRests);
-  }*/
-
   //deletes items from rests
   function delItem(id) {
     const newRests = rests.filter((rest) => !(rest.id === id));
@@ -86,6 +116,24 @@ export default function Home() {
       <div className="">
         {/*top navbar div*/}
         <div className="mx-auto fixed inset-x-0 top-0 text-center bg-stone-200 py-5">
+          <div className="m-3">
+            <label>Name and Address: </label>
+            <select
+              name="name-address"
+              ref={nameAddressRef}
+              className="border-2 border-black rounded"
+            >
+              <option value="">--Search for Restaurant Here--</option>
+              {restList.map((restName) => {
+                return (
+                  <option value={restName.PermitID.toString()}>
+                    {restName.Name} | {restName.Address}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+
           <div className="inline-block mx-3">
             <label>Name</label>
             <input
@@ -95,6 +143,7 @@ export default function Home() {
               className="border-2 border-black rounded ml-1"
             ></input>
           </div>
+
           <div className="inline-block mx-3">
             <label>Address</label>
             <input
@@ -104,6 +153,7 @@ export default function Home() {
               className="border-2 border-black rounded ml-1"
             ></input>
           </div>
+
           <div className="inline-block mx-3">
             <label>Cuisine</label>
             <input
@@ -113,6 +163,7 @@ export default function Home() {
               className="border-2 border-black rounded ml-1"
             ></input>
           </div>
+
           <div className="inline-block mx-3">
             <label>Price </label>
             <label> $</label>
@@ -124,6 +175,7 @@ export default function Home() {
             <label> ???</label>
             <input type="radio" name="price" value="???" ref={radioref}></input>
           </div>
+
           <div className="inline-block mx-3">
             <button
               onClick={handleAddRestaurant}
@@ -135,7 +187,7 @@ export default function Home() {
         </div>
 
         {/*where all of the restaurants are displayed*/}
-        <div className="mt-[4.5rem] mx-7">
+        <div className="mt-[7.5rem] mx-7">
           <EntryList
             rests={rests}
             toggleVisited={toggleVisited}
@@ -147,4 +199,20 @@ export default function Home() {
       </div>
     </>
   );
+}
+
+export const getStaticProps = async () => {
+  const dataOut = restaurantData.map((entry) => {
+    let entryOut = { ...entry };
+    entryOut.Name = toTitleCase(entry.Name);
+    entryOut.Address = toTitleCase(entry.Address);
+    return entryOut;
+  });
+  return { props: { restaurantList: dataOut } };
+};
+
+function toTitleCase(str) {
+  return str.replace(/\w\S*/g, function (txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
 }

@@ -35,9 +35,9 @@ export default function EntryList({
   }
 
   function comparePrice(a, b) {
-    compA = 4;
-    compB = 4;
-    switch (a) {
+    var compA = 4;
+    var compB = 4;
+    switch (a.price) {
       case "$":
         compA = 1;
         break;
@@ -48,7 +48,7 @@ export default function EntryList({
         compA = 3;
         break;
     }
-    switch (b) {
+    switch (b.price) {
       case "$":
         compB = 1;
         break;
@@ -59,15 +59,17 @@ export default function EntryList({
         compB = 3;
         break;
     }
+    console.log(compA + " " + compB);
+    console.log(a + " " + b);
     return compA - compB;
   }
 
   function compareVisited(a, b) {
-    aComp = 0;
-    bComp = 0;
+    var aComp = 0;
+    var bComp = 0;
     if (a.visited) aComp = 1;
-    if (b.visited) bComop = 1;
-    return aComp - bComop;
+    if (b.visited) bComp = 1;
+    return aComp - bComp;
   }
 
   //filters out the entries
@@ -121,11 +123,16 @@ export default function EntryList({
   return (
     <>
       {/*div for the filters*/}
-      <div className="fixed w-1/6">
+      <div className="fixed w-1/6 top-28">
         {/*div for sort*/}
         <div className="mt-3">
           <label for="sort-by">Sort By:</label>
-          <select name="sort" id="sort-by" ref={sortRef}>
+          <select
+            name="sort"
+            id="sort-by"
+            ref={sortRef}
+            className="border-2 border-black rounded"
+          >
             <option value="">--Choose an Option--</option>
             <option value="name">Name</option>
             <option value="cuisine">Cuisine</option>

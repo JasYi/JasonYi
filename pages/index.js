@@ -49,8 +49,8 @@ export default function Home({ restaurantList }) {
     console.log(name + " " + address);
 
     //checking the form
-    if (nameref.current.value != null) name = nameref.current.value;
-    if (addressref.current.value != null) address = addressref.current.value;
+    if (nameref.current.value != "") name = nameref.current.value;
+    if (addressref.current.value != "") address = addressref.current.value;
 
     //checking cuisine and price
     var cuisine;

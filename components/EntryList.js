@@ -15,6 +15,8 @@ export default function EntryList({
   const notVisitedRef = useRef();
   const sortRef = useRef();
 
+  const [location, setLocation] = useState({ longitude: 0, latitude: 0 });
+
   const [restsOut, setRestsOut] = useState([...rests]);
 
   //handles whenever the rests changes aka whenever someone adds something
@@ -72,6 +74,24 @@ export default function EntryList({
     return aComp - bComp;
   }
 
+  function compareLocation(a, b) {
+    console.log(
+      location.longitude + " " + location.latitude + " curr location"
+    );
+
+    var distA = Math.sqrt(
+      Math.pow(parseFloat(a.longitude) - parseFloat(location.longitude), 2) +
+        Math.pow(parseFloat(a.latitude) - parseFloat(location.latitude), 2)
+    );
+    var distB = Math.sqrt(
+      Math.pow(parseFloat(b.longitude) - parseFloat(location.longitude), 2) +
+        Math.pow(parseFloat(b.latitude) - parseFloat(location.latitude), 2)
+    );
+    console.log(a.name + " 1 " + distA);
+    console.log(b.name + " 2 " + distB);
+    return distA - distB;
+  }
+
   //filters out the entries
   function onFilterClick() {
     var checked1 = price1Ref.current.checked;
@@ -117,27 +137,42 @@ export default function EntryList({
       setRestsOut(tempRestsOut.sort(comparePrice));
     else if (sortCategory == "visited")
       setRestsOut(tempRestsOut.sort(compareVisited));
-    else setRestsOut(tempRestsOut);
+    else if (sortCategory == "location") {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+          //this gets current location then sorts based on that
+          var currLat = position.coords.latitude;
+          var currLong = position.coords.longitude;
+          setLocation({ longitude: currLong, latitude: currLat });
+          setRestsOut(tempRestsOut.sort(compareLocation));
+        }, geolocationError);
+      }
+    } else setRestsOut(tempRestsOut);
+  }
+
+  //handles if error
+  function geolocationError(error) {
+    console.log(error);
   }
 
   return (
     <>
       {/*div for the filters*/}
-      <div className="fixed w-1/6 top-28">
+      <div className="fixed w-1/6 top-52 sm:top-32">
         {/*div for sort*/}
-        <div className="mt-3">
-          <label for="sort-by">Sort By:</label>
+        <div className="text-sm sm:text-base sm:mt-3">
           <select
             name="sort"
             id="sort-by"
             ref={sortRef}
             className="border-2 border-black rounded"
           >
-            <option value="">--Choose an Option--</option>
+            <option value="">Sort By</option>
             <option value="name">Name</option>
             <option value="cuisine">Cuisine</option>
             <option value="price">Price</option>
             <option value="visited">Visited</option>
+            <option value="location">Location</option>
           </select>
         </div>
         {/*div for visited or not*/}
@@ -171,14 +206,14 @@ export default function EntryList({
         </div>
         <button
           onClick={onFilterClick}
-          className="border-2 p-1 border-black rounded-full mt-3"
+          className="border-2 sm:p-1 border-black rounded-full mt-3"
         >
           Apply Filters
         </button>
       </div>
 
       {/*div for the entries*/}
-      <div className="inline-block w-5/6 float-right">
+      <div className="inline-block w-3/6 sm:w-5/6 mt-20 sm:mt-0 float-right">
         {restsOut.map((rest) => {
           return (
             <>

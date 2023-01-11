@@ -24,6 +24,7 @@ export default function Home({ restaurantList }) {
   useEffect(() => {
     const storedRests = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
     if (storedRests) setRests(storedRests);
+    console.log(rests);
   }, []);
 
   //sets info in local storage whenever rests is changed
@@ -36,6 +37,8 @@ export default function Home({ restaurantList }) {
     //using the dropdown menu
     var name = "";
     var address = "";
+    var longitude = "";
+    var latitude = "";
     var restID;
     if (nameAddressRef.current.value != null)
       restID = nameAddressRef.current.value;
@@ -44,6 +47,8 @@ export default function Home({ restaurantList }) {
       if (entry.PermitID.toString() === restID.toString()) {
         name = entry.Name;
         address = entry.Address;
+        longitude = entry.Longitude;
+        latitude = entry.Lattitude;
       }
     });
     console.log(name + " " + address);
@@ -76,9 +81,15 @@ export default function Home({ restaurantList }) {
           price: price,
           visited: false,
           notes: "",
+          longitude: longitude,
+          latitude: latitude,
         },
       ];
     });
+
+    console.log(rests);
+    console.log(name + " " + longitude + " " + latitude);
+
     nameref.current.value = null;
     addressref.current.value = null;
     cuisineref.current.value = null;
@@ -201,6 +212,7 @@ export default function Home({ restaurantList }) {
   );
 }
 
+//
 export const getStaticProps = async () => {
   const dataOut = restaurantData.map((entry) => {
     let entryOut = { ...entry };
@@ -208,6 +220,7 @@ export const getStaticProps = async () => {
     entryOut.Address = toTitleCase(entry.Address);
     return entryOut;
   });
+
   return { props: { restaurantList: dataOut } };
 };
 

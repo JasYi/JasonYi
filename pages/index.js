@@ -6,6 +6,7 @@ import EntryList from "../components/EntryList";
 import Papa from "papaparse";
 import { restaurantData } from "../data";
 const LOCAL_STORAGE_KEY = "GETLIST";
+const GEOCODE_KEY = "453857c79d67ab847cf47e1f3e9ed946";
 
 /*const fs = require("fs");
 const { parse } = require("csv-parse");*/
@@ -33,7 +34,7 @@ export default function Home({ restaurantList }) {
   }, [rests]);
 
   //adds resturaunt
-  function handleAddRestaurant(e) {
+  async function handleAddRestaurant(e) {
     //using the dropdown menu
     var name = "";
     var address = "";
@@ -68,6 +69,30 @@ export default function Home({ restaurantList }) {
       console.log(price);
     } else price = "???";
     console.log(price + " price");
+
+    //convering address to longitude and latitude
+    if (longitude == 0 && latitude == 0) {
+      const res = await fetch(
+        "http://api.positionstack.com/v1/forward?access_key=" +
+          GEOCODE_KEY +
+          "&query=" +
+          address +
+          "&output=json"
+      );
+
+      const data = res.json();
+
+      if (!data) {
+        throw "database parse failed";
+      }
+
+      await data.then(function (dataArr) {
+        //console.log([dataArr.data[0].latitude, dataArr.data[0].longitude]);
+        longitude = dataArr.data[0].longitude;
+        latitude = dataArr.data[0].latitude;
+      });
+      //end of geocoding API call
+    }
 
     //if (name === "" || cuisine === "" || price === null) return;
     setRests((prevRests) => {

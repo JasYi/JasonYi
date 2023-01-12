@@ -72,25 +72,18 @@ export default function Home({ restaurantList }) {
 
     //convering address to longitude and latitude
     if (longitude == 0 && latitude == 0) {
-      const res = await fetch(
+      fetch(
         "http://api.positionstack.com/v1/forward?access_key=" +
           GEOCODE_KEY +
           "&query=" +
           address +
           "&output=json"
-      );
-
-      const data = res.json();
-
-      if (!data) {
-        throw "database parse failed";
-      }
-
-      await data.then(function (dataArr) {
-        //console.log([dataArr.data[0].latitude, dataArr.data[0].longitude]);
-        longitude = dataArr.data[0].longitude;
-        latitude = dataArr.data[0].latitude;
-      });
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          longitude = data.data[0].longitude;
+          latitude = data.data[0].latitude;
+        });
       //end of geocoding API call
     }
 

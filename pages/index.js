@@ -25,8 +25,6 @@ export default function Home({ restaurantList }) {
   useEffect(() => {
     const storedRests = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
     if (storedRests) setRests(storedRests);
-    console.log(storedRests + " stored rests");
-    console.log(rests + " initial rests");
   }, []);
 
   //sets info in local storage whenever rests is changed

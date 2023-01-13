@@ -145,6 +145,7 @@ export default function EntryList({
           //this gets current location then sorts based on that
           var currLat = position.coords.latitude;
           var currLong = position.coords.longitude;
+          alert(currLong + " " + currLat);
           setLocation({ longitude: currLong, latitude: currLat });
           setRestsOut(tempRestsOut.sort(compareLocation));
         }, geolocationError);

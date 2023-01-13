@@ -6,7 +6,9 @@ import EntryList from "../components/EntryList";
 import Papa from "papaparse";
 import { restaurantData } from "../data";
 const LOCAL_STORAGE_KEY = "GETLIST";
-const GEOCODE_KEY = "453857c79d67ab847cf47e1f3e9ed946";
+const GEOCODE_KEY = "47c61b7956bd9c7c2f5774eaaff686b7";
+
+const axios = require("axios");
 
 /*const fs = require("fs");
 const { parse } = require("csv-parse");*/
@@ -26,30 +28,6 @@ export default function Home({ restaurantList }) {
     const storedRests = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
     if (storedRests) {
       var tempRests = [...storedRests];
-
-      tempRests.map(async function (rest) {
-        if (rest.longitude == 0 && rest.latitude == 0) {
-          var longitude = 0;
-          var latitude = 0;
-          await fetch(
-            "http://api.positionstack.com/v1/forward?access_key=" +
-              GEOCODE_KEY +
-              "&query=" +
-              address +
-              "&output=json"
-          )
-            .then((response) => response.json())
-            .then((data) => {
-              longitude = data.data[0].longitude;
-              latitude = data.data[0].latitude;
-              console.log(longitude + " " + latitude + " adding");
-              alert(longitude + " " + latitude + " location of 0 stuff");
-              rest.longitude = longitude;
-              rest.latitude = latitude;
-            });
-          //end of geocoding API call
-        }
-      });
 
       setRests(tempRests);
       console.log(tempRests);
@@ -97,8 +75,9 @@ export default function Home({ restaurantList }) {
     //using the dropdown menu
     var name = "";
     var address = "";
-    var longitude = "";
-    var latitude = "";
+    var longitude = 0;
+    var latitude = 0;
+    var idOut = uniqid();
     var restID;
     if (nameAddressRef.current.value != null)
       restID = nameAddressRef.current.value;
@@ -107,15 +86,17 @@ export default function Home({ restaurantList }) {
       if (entry.PermitID.toString() === restID.toString()) {
         name = entry.Name;
         address = entry.Address;
-        longitude = entry.Longitude;
-        latitude = entry.Lattitude;
+        longitude = parseFloat(entry.Longitude);
+        latitude = parseFloat(entry.Lattitude);
       }
     });
-    console.log(name + " " + address);
+    console.log(name + " " + address + " name address");
 
     //checking the form
     if (nameref.current.value != "") name = nameref.current.value;
     if (addressref.current.value != "") address = addressref.current.value;
+
+    console.log(address + " address");
 
     //checking cuisine and price
     var cuisine;
@@ -129,21 +110,45 @@ export default function Home({ restaurantList }) {
     } else price = "???";
     console.log(price + " price");
 
-    //convering address to longitude and latitude
-    if (longitude == 0 && latitude == 0) {
-      await fetch(
+    //converting address to longitude and latitude
+    if (address.length >= 1) {
+      console.log("in if");
+      const params = {
+        access_key: "47c61b7956bd9c7c2f5774eaaff686b7",
+        query: address,
+      };
+      await axios
+        .get("http://api.positionstack.com/v1/forward", { params })
+        .then((response) => {
+          var arr = [1, 2, 3];
+          const res = response.data;
+          console.log(response.data.data[0]);
+          console.log("response ^");
+          longitude = response.data.data[0].longitude;
+          latitude = response.data.data[0].latitude;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+      /*await fetch(
         "http://api.positionstack.com/v1/forward?access_key=" +
           GEOCODE_KEY +
           "&query=" +
           address +
           "&output=json"
+
+        http://api.positionstack.com/v1/forward?access_key= YOUR_ACCESS_KEY
+    & query = 1600 Pennsylvania Ave NW, Washington DC
       )
         .then((response) => response.json())
         .then((data) => {
-          longitude = data.data[0].longitude;
-          latitude = data.data[0].latitude;
+          if (data.length > 0) {
+            //LEFT OFF 1/13/23: data is not returning anything this is a problem
+            longitude = data.data[0].longitude;
+            latitude = data.data[0].latitude;
+          }
           console.log(longitude + " " + latitude + " adding");
-        });
+        });*/
       //end of geocoding API call
     }
 
@@ -152,7 +157,7 @@ export default function Home({ restaurantList }) {
       return [
         ...prevRests,
         {
-          id: uniqid(),
+          id: idOut,
           name: name,
           address: address,
           cuisine: cuisine,
@@ -168,9 +173,9 @@ export default function Home({ restaurantList }) {
     console.log(rests);
     console.log(name + " " + longitude + " " + latitude);
 
-    nameref.current.value = null;
-    addressref.current.value = null;
-    cuisineref.current.value = null;
+    nameref.current.value = "";
+    addressref.current.value = "";
+    cuisineref.current.value = "";
     if (document.querySelector('input[name="price"]:checked') != null)
       document.querySelector('input[name="price"]:checked').checked = false;
     nameAddressRef.current.value = "";

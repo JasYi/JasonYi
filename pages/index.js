@@ -24,12 +24,72 @@ export default function Home({ restaurantList }) {
   //gets information from local storage on start of app
   useEffect(() => {
     const storedRests = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-    if (storedRests) setRests(storedRests);
+    if (storedRests) {
+      var tempRests = [...storedRests];
+
+      tempRests.map(async function (rest) {
+        if (rest.longitude == 0 && rest.latitude == 0) {
+          var longitude = 0;
+          var latitude = 0;
+          await fetch(
+            "http://api.positionstack.com/v1/forward?access_key=" +
+              GEOCODE_KEY +
+              "&query=" +
+              address +
+              "&output=json"
+          )
+            .then((response) => response.json())
+            .then((data) => {
+              longitude = data.data[0].longitude;
+              latitude = data.data[0].latitude;
+              console.log(longitude + " " + latitude + " adding");
+              alert(longitude + " " + latitude + " location of 0 stuff");
+              rest.longitude = longitude;
+              rest.latitude = latitude;
+            });
+          //end of geocoding API call
+        }
+      });
+
+      setRests(tempRests);
+      console.log(tempRests);
+
+      //if (storedRests) setRests(storedRests);
+
+      console.log(rests);
+    }
+    /*
+    var tempRests = [...rests];
+
+    tempRests.map(async function (rest) {
+      if (longitude == 0 && latitude == 0) {
+        await fetch(
+          "http://api.positionstack.com/v1/forward?access_key=" +
+            GEOCODE_KEY +
+            "&query=" +
+            address +
+            "&output=json"
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            longitude = data.data[0].longitude;
+            latitude = data.data[0].latitude;
+            console.log(longitude + " " + latitude + " adding");
+            rest.longitude = longitude;
+            rest.latitude = latitude;
+          });
+        //end of geocoding API call
+      }
+    });
+
+    setRests(tempRests);
+    console.log(tempRests);*/
   }, []);
 
   //sets info in local storage whenever rests is changed
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(rests));
+    console.log(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)));
   }, [rests]);
 
   //adds resturaunt

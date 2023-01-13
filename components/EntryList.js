@@ -94,7 +94,7 @@ export default function EntryList({
 
   //filters out the entries
   function onFilterClick() {
-    console.log(rests);
+    console.log(rests + " onFilterClick");
 
     var checked1 = price1Ref.current.checked;
     var checked2 = price2Ref.current.checked;
@@ -145,7 +145,7 @@ export default function EntryList({
           //this gets current location then sorts based on that
           var currLat = position.coords.latitude;
           var currLong = position.coords.longitude;
-          alert(rests[0].latitude + " " + rests[0].longitude);
+          //alert(rests[0].latitude + " " + rests[0].longitude);
           setLocation({ longitude: currLong, latitude: currLat });
           setRestsOut(tempRestsOut.sort(compareLocation));
         }, geolocationError);
@@ -180,9 +180,9 @@ export default function EntryList({
         </div>
         {/*div for visited or not*/}
         <div className="mt-3">
-          <label for="visitedQuestion">Visited </label>
+          <label htmlFor="visitedQuestion">Visited </label>
           <input type="checkbox" id="visitedQuestion" ref={visitedRef}></input>
-          <label for="notVisitedQuestion">Not Visited</label>
+          <label htmlFor="notVisitedQuestion">Not Visited</label>
           <input type="checkbox" id="notVisitedQuestion" ref={notVisitedRef} />
         </div>
         {/*div for price range selector*/}

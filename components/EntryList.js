@@ -94,6 +94,8 @@ export default function EntryList({
 
   //filters out the entries
   function onFilterClick() {
+    console.log(rests);
+
     var checked1 = price1Ref.current.checked;
     var checked2 = price2Ref.current.checked;
     var checked3 = price3Ref.current.checked;
@@ -214,19 +216,14 @@ export default function EntryList({
 
       {/*div for the entries*/}
       <div className="inline-block w-3/6 sm:w-5/6 mt-20 sm:mt-0 float-right">
-        {restsOut.map((rest) => {
-          return (
-            <>
-              <Entry
-                key={rest.id}
-                rest={rest}
-                toggleVisited={toggleVisited}
-                delItem={delItem}
-                changeNotes={changeNotes}
-              />
-            </>
-          );
-        })}
+        {restsOut.map((rest) => (
+          <Entry
+            rest={rest}
+            toggleVisited={toggleVisited}
+            delItem={delItem}
+            changeNotes={changeNotes}
+          />
+        ))}
       </div>
     </>
   );

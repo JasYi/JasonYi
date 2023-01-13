@@ -48,9 +48,8 @@ export default function entry({ rest, toggleVisited, delItem, changeNotes }) {
             className="border-2 border-black"
             onChange={handleNotesChange}
             ref={notesRef}
-          >
-            {rest.notes}
-          </textarea>
+            defaultValue={rest.notes}
+          ></textarea>
         </div>
       </div>
     </>

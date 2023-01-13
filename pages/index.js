@@ -25,7 +25,8 @@ export default function Home({ restaurantList }) {
   useEffect(() => {
     const storedRests = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
     if (storedRests) setRests(storedRests);
-    console.log(rests);
+    console.log(storedRests + " stored rests");
+    console.log(rests + " initial rests");
   }, []);
 
   //sets info in local storage whenever rests is changed
@@ -72,7 +73,7 @@ export default function Home({ restaurantList }) {
 
     //convering address to longitude and latitude
     if (longitude == 0 && latitude == 0) {
-      fetch(
+      await fetch(
         "http://api.positionstack.com/v1/forward?access_key=" +
           GEOCODE_KEY +
           "&query=" +
@@ -83,6 +84,7 @@ export default function Home({ restaurantList }) {
         .then((data) => {
           longitude = data.data[0].longitude;
           latitude = data.data[0].latitude;
+          console.log(longitude + " " + latitude + " adding");
         });
       //end of geocoding API call
     }
@@ -155,7 +157,10 @@ export default function Home({ restaurantList }) {
               <option value="">--Search for Restaurant Here--</option>
               {restList.map((restName) => {
                 return (
-                  <option value={restName.PermitID.toString()}>
+                  <option
+                    key={restName.PermitID}
+                    value={restName.PermitID.toString()}
+                  >
                     {restName.Name} | {restName.Address}
                   </option>
                 );

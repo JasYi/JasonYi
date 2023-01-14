@@ -298,16 +298,22 @@ export default function Home({ restaurantList }) {
   );
 }
 
+function restNameCompare(a, b) {
+  return a.Name.toLowerCase().localeCompare(b.Name.toLowerCase());
+}
+
 //
 export const getStaticProps = async () => {
-  const dataOut = restaurantData.map((entry) => {
+  var dataOut = restaurantData.map((entry) => {
     let entryOut = { ...entry };
     entryOut.Name = toTitleCase(entry.Name);
     entryOut.Address = toTitleCase(entry.Address);
     return entryOut;
   });
 
-  return { props: { restaurantList: dataOut } };
+  const returnData = dataOut.sort(restNameCompare);
+
+  return { props: { restaurantList: returnData } };
 };
 
 function toTitleCase(str) {

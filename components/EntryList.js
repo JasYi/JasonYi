@@ -161,7 +161,7 @@ export default function EntryList({
   return (
     <>
       {/*div for the filters*/}
-      <div className="fixed w-1/6 top-52 sm:top-32">
+      <div className="fixed w-1/6 top-52 sm:top-32 ">
         {/*div for sort*/}
         <div className="text-sm sm:text-base sm:mt-3">
           <select
@@ -216,7 +216,7 @@ export default function EntryList({
       </div>
 
       {/*div for the entries*/}
-      <div className="inline-block w-3/6 sm:w-5/6 mt-20 sm:mt-0 float-right">
+      <div className="inline-block w-3/6 sm:w-5/6 mt-20 px-10 sm:mt-0 float-right bg-lightgreen">
         {restsOut.map((rest) => (
           <Entry
             rest={rest}

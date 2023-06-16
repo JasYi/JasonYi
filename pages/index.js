@@ -209,8 +209,10 @@ export default function Home({ restaurantList }) {
     <>
       <div className="">
         {/*top navbar div*/}
-        <h1 className="text-center text-lg">Bytes</h1>
-        <div className="mx-auto fixed inset-x-0 top-0 text-center bg-stone-200 py-5">
+        <div className="mx-auto fixed inset-x-0 top-0 text-center bg-darkgreen py-5">
+          <h1 className="text-center text-xl font-bold mt-0 pt-0 wt-2">
+            Bytes
+          </h1>
           <div className="m-3">
             <label>Name and Address: </label>
             <select
@@ -285,7 +287,7 @@ export default function Home({ restaurantList }) {
         </div>
 
         {/*where all of the restaurants are displayed*/}
-        <div className="mt-[7.5rem] mx-7">
+        <div className="mt-[9.5rem] mx-7">
           <EntryList
             rests={rests}
             toggleVisited={toggleVisited}

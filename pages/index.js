@@ -209,6 +209,7 @@ export default function Home({ restaurantList }) {
     <>
       <div className="">
         {/*top navbar div*/}
+        <h1 className="text-center text-lg">Bytes</h1>
         <div className="mx-auto fixed inset-x-0 top-0 text-center bg-stone-200 py-5">
           <div className="m-3">
             <label>Name and Address: </label>
